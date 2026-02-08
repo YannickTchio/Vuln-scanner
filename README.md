@@ -7,6 +7,7 @@ The tool performs TCP connect port scanning, best-effort banner grabbing, and pr
 **This project is intended only for systems you own or have explicit authorization to test.**
 
 **Features**
+
 	- TCP Connect Port Scanning:	Scan common service ports or a custom port list
 	- Multi-Threaded Execution: Concurrent scanning using ThreadPoolExecutor
 	- Banner Grabbing:	Attempts to collect service banners when available
@@ -16,6 +17,7 @@ The tool performs TCP connect port scanning, best-effort banner grabbing, and pr
 
 **Project Motivation**
 This project was developed to explore defensive network security fundamentals, including:
+
 - Service exposure analysis
 -	Secure infrastructure assessment
 -	Ethical reconnaissance workflows
@@ -23,6 +25,7 @@ This project was developed to explore defensive network security fundamentals, i
 It mirrors early-stage tasks commonly performed in SOC, GRC, and security engineering roles.
 
 **Technologies Used**
+
 -	Python 3
 -	socket – low-level network communication
 -	concurrent.futures – multi-threaded scanning
@@ -80,6 +83,7 @@ python3 src/scanner.py 192.168.1.10 \
 
 **Ethical & Security Considerations**
 This scanner intentionally avoids:
+
 -	Exploitation techniques
 -	Credential attacks
 -	Brute-force methods
@@ -88,6 +92,7 @@ Its goal is visibility, assessment, and documentation, aligned with responsible 
 
 **Learning Outcomes**
 Through this project, I strengthened my understanding of:
+
 -	Network service exposure
 -	TCP/IP security fundamentals
 -	Ethical vulnerability assessment
@@ -96,6 +101,7 @@ Through this project, I strengthened my understanding of:
 
 **Future Enhancements**
 Planned improvements include:
+
 -	Service fingerprinting
 -	CVE correlation
 -	Risk scoring models
@@ -103,6 +109,7 @@ Planned improvements include:
 -	Scan profiling and rate limiting
 
 **License**
+
 This project is licensed under the MIT License.
 See the LICENSE file for details.
 
