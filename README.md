@@ -8,7 +8,9 @@ The tool performs TCP connect port scanning, best-effort banner grabbing, and pr
 
 **Features**
 	- TCP Connect Port Scanning:	Scan common service ports or a custom port list
+	
 	- Multi-Threaded Execution: Concurrent scanning using ThreadPoolExecutor
+	
 	- Banner Grabbing:	Attempts to collect service banners when available
 	- Risk Context Mapping:	Security-relevant risk notes for common exposed services
 	- Automated Reporting:	Human-readable text report and Machine-readable JSON output
