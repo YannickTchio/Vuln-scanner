@@ -34,6 +34,7 @@ It mirrors early-stage tasks commonly performed in SOC, GRC, and security engine
 Tested on Linux / Kali Linux.
 
 **Project Structure**
+
 vuln-scanner/
 ├── src/
 │   └── scanner.py        # Main scanner logic
@@ -113,7 +114,7 @@ Planned improvements include:
 This project is licensed under the MIT License.
 See the LICENSE file for details.
 
-**Author**
+**Author:**
 **Yannick Tchio**
 **Computer Engineering — Cybersecurity Concentration**
 **University of Arkansas**
