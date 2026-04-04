@@ -3,7 +3,8 @@
 """
 Network Vulnerability Scanner (Basic Version)
 
-This version adds service identification and banner grabbing.
+This version adds service identification, banner grabbing,
+and risk annotations for common exposed services.
 """
 
 import socket
@@ -15,6 +16,23 @@ COMMON_PORTS = [
     21, 22, 23, 25, 53, 80, 110, 111, 135, 139, 143, 443, 445,
     465, 587, 993, 995, 1433, 1521, 2049, 3306, 3389, 5900, 8080
 ]
+
+RISK_HINTS = {
+    21:  "FTP open — plaintext transfer; check anonymous login.",
+    22:  "SSH open — ensure strong auth and restrict access.",
+    23:  "TELNET open — HIGH RISK: unencrypted channel.",
+    25:  "SMTP open — check open relay; enforce TLS.",
+    53:  "DNS open — check recursion and zone transfer restrictions.",
+    80:  "HTTP open — review headers, auth, and OWASP risks.",
+    110: "POP3 open — prefer TLS; disable plaintext.",
+    139: "NetBIOS open — legacy exposure; restrict if possible.",
+    143: "IMAP open — prefer TLS; disable plaintext.",
+    443: "HTTPS open — verify TLS configuration and certificate validity.",
+    445: "SMB open — lateral movement risk; check version and signing.",
+    3306:"MySQL open — restrict to trusted hosts; enforce strong credentials.",
+    3389:"RDP open — restrict exposure; enforce MFA and lockout.",
+    8080:"HTTP-alt open — admin panels often exposed on this port.",
+}
 
 
 def tcp_connect_scan(ip: str, port: int, timeout: float) -> bool:
@@ -74,7 +92,8 @@ def main():
             return {
                 "port": port,
                 "service": port_label(port),
-                "banner": grab_banner(ip, port, args.timeout)
+                "banner": grab_banner(ip, port, args.timeout),
+                "risk": RISK_HINTS.get(port, "")
             }
         return None
 
@@ -91,6 +110,9 @@ def main():
 
                 if result["banner"]:
                     print(f"        banner : {result['banner']}")
+
+                if result["risk"]:
+                    print(f"        note   : {result['risk']}")
 
     open_results.sort(key=lambda x: x["port"])
 
