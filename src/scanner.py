@@ -3,9 +3,7 @@
 """
 Network Vulnerability Scanner (Basic Version)
 
-This is the initial version of the scanner. 
-It performs a basic TCP connect scan on common ports.
-
+This version adds service identification and banner grabbing.
 """
 
 import socket
@@ -31,11 +29,39 @@ def tcp_connect_scan(ip: str, port: int, timeout: float) -> bool:
         sock.close()
 
 
+def grab_banner(ip: str, port: int, timeout: float) -> str:
+    """Attempt to retrieve service banner."""
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(timeout)
+        sock.connect((ip, port))
+
+        banner = ""
+        try:
+            data = sock.recv(1024)
+            banner = data.decode(errors="ignore").strip()
+        except Exception:
+            pass
+
+        sock.close()
+        return banner
+    except Exception:
+        return ""
+
+
+def port_label(port: int) -> str:
+    """Resolve service name from port number."""
+    try:
+        return socket.getservbyport(port)
+    except Exception:
+        return "unknown"
+
+
 def main():
     parser = argparse.ArgumentParser(description="Basic TCP Port Scanner")
     parser.add_argument("target", help="Target IPv4 address (e.g., 192.168.1.10)")
-    parser.add_argument("--timeout", type=float, default=0.6, help="Socket timeout (default: 0.6)")
-    parser.add_argument("--threads", type=int, default=60, help="Number of threads (default: 60)")
+    parser.add_argument("--timeout", type=float, default=0.6)
+    parser.add_argument("--threads", type=int, default=60)
     args = parser.parse_args()
 
     ip = args.target.strip()
@@ -43,28 +69,36 @@ def main():
     print(f"\nTarget: {ip}")
     print(f"Scanning {len(COMMON_PORTS)} ports...\n")
 
-    open_ports = []
+    def scan_one(port: int):
+        if tcp_connect_scan(ip, port, args.timeout):
+            return {
+                "port": port,
+                "service": port_label(port),
+                "banner": grab_banner(ip, port, args.timeout)
+            }
+        return None
 
-    # Multithreaded scanning
+    open_results = []
+
     with ThreadPoolExecutor(max_workers=max(1, args.threads)) as executor:
-        futures = {executor.submit(tcp_connect_scan, ip, port, args.timeout): port for port in COMMON_PORTS}
+        futures = [executor.submit(scan_one, port) for port in COMMON_PORTS]
 
         for future in as_completed(futures):
-            port = futures[future]
-            if future.result():
-                open_ports.append(port)
-                print(f"[OPEN ] {port}/tcp")
+            result = future.result()
+            if result:
+                open_results.append(result)
+                print(f"[OPEN ] {result['port']}/tcp ({result['service']})")
 
-    open_ports.sort()
+                if result["banner"]:
+                    print(f"        banner : {result['banner']}")
+
+    open_results.sort(key=lambda x: x["port"])
 
     print("\nScan complete.")
 
-    if not open_ports:
+    if not open_results:
         print("No open ports found.")
-    else:
-        print(f"Open ports: {open_ports}")
 
 
 if __name__ == "__main__":
     main()
-
