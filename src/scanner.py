@@ -4,7 +4,7 @@
 Network Vulnerability Scanner (Basic Version)
 
 This version adds service identification, banner grabbing,
-and risk annotations for common exposed services.
+risk annotations, and support for custom port selection.
 """
 
 import socket
@@ -75,17 +75,37 @@ def port_label(port: int) -> str:
         return "unknown"
 
 
+def parse_ports(ports_arg: str):
+    """Parse comma-separated ports."""
+    if not ports_arg.strip():
+        return COMMON_PORTS
+
+    ports = []
+    for p in ports_arg.split(","):
+        p = p.strip()
+        if not p:
+            continue
+        if p.isdigit():
+            val = int(p)
+            if 1 <= val <= 65535:
+                ports.append(val)
+
+    return sorted(set(ports))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Basic TCP Port Scanner")
     parser.add_argument("target", help="Target IPv4 address (e.g., 192.168.1.10)")
+    parser.add_argument("--ports", default="", help="Comma-separated ports (e.g., 22,80,443)")
     parser.add_argument("--timeout", type=float, default=0.6)
     parser.add_argument("--threads", type=int, default=60)
     args = parser.parse_args()
 
     ip = args.target.strip()
+    ports = parse_ports(args.ports)
 
     print(f"\nTarget: {ip}")
-    print(f"Scanning {len(COMMON_PORTS)} ports...\n")
+    print(f"Scanning {len(ports)} ports...\n")
 
     def scan_one(port: int):
         if tcp_connect_scan(ip, port, args.timeout):
@@ -100,7 +120,7 @@ def main():
     open_results = []
 
     with ThreadPoolExecutor(max_workers=max(1, args.threads)) as executor:
-        futures = [executor.submit(scan_one, port) for port in COMMON_PORTS]
+        futures = [executor.submit(scan_one, port) for port in ports]
 
         for future in as_completed(futures):
             result = future.result()
