@@ -37,6 +37,8 @@ Tested on Linux / Kali Linux.
 **Project Structure**
 
 vuln-scanner/
+
+
 ├── src/
 │   └── scanner.py        # Main scanner logic
 ├── reports/              # Generated scan reports
