@@ -38,14 +38,17 @@ Tested on Linux / Kali Linux.
 
 vuln-scanner/
 
-
 ├── src/
 │   └── scanner.py        # Main scanner logic
+
 ├── reports/              # Generated scan reports
 │   ├── report_<target>.txt
 │   └── report_<target>.json
+
 ├── README.md
+
 ├── LICENSE
+
 └── .gitignore
 
 **Usage**
@@ -67,13 +70,20 @@ Reports are saved in the reports/ directory.
 **Sample Output**
 
 Target : 127.0.0.1
+
 Ports: 4 to scan
+
 Threads: 20 Timeout: 0.5s
 
+
 [OPEN ] 22/tcp (ssh)
+
 [OPEN ] 80/tcp (http)
+
 ────────────────────────────────────────
+
 Scan complete -2 open port(s) found.
+
 Open ports: 22, 80
 
 
