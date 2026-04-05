@@ -40,13 +40,13 @@ vuln-scanner/
 
 ├── src/
 
-│   └── scanner.py        # Main scanner logic
+      └── scanner.py        # Main scanner logic
 
 ├── reports/              # Generated scan reports
 
-│   ├── report_<target>.txt
+      ├── report_<target>.txt
 
-│   └── report_<target>.json
+      └── report_<target>.json
 
 ├── README.md
 
