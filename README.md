@@ -80,7 +80,7 @@ Threads: 20 Timeout: 0.5s
 
 [OPEN ] 80/tcp (http)
 
-────────────────────────────────────────
+─────────────────────────────
 
 Scan complete -2 open port(s) found.
 
