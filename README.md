@@ -39,10 +39,13 @@ Tested on Linux / Kali Linux.
 vuln-scanner/
 
 ├── src/
+
 │   └── scanner.py        # Main scanner logic
 
 ├── reports/              # Generated scan reports
+
 │   ├── report_<target>.txt
+
 │   └── report_<target>.json
 
 ├── README.md
