@@ -65,6 +65,7 @@ Reports are saved in the reports/ directory.
 
 
 **Sample Output**
+
 Target : 127.0.0.1
 Ports: 4 to scan
 Threads: 20 Timeout: 0.5s
