@@ -237,7 +237,7 @@ def main():
     open_results.sort(key=lambda x: x["port"])
 
     print(f"\n{'─'*40}")
-    print(f"Scan complete — {len(open_results)} open port(s) found.")
+    print(f"Scan complete - {len(open_results)} open port(s) found.")
 
     if not open_results:
         print("No open ports found on the scanned list.")
