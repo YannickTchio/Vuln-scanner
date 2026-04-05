@@ -4,11 +4,13 @@
 Network Vulnerability Scanner (Basic Version)
 
 This version adds service identification, banner grabbing,
-risk annotations, and support for custom port selection.
+risk annotations, custom port selection, and report generation.
 """
 
 import socket
 import argparse
+import json
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Common ports to scan
@@ -93,12 +95,45 @@ def parse_ports(ports_arg: str):
     return sorted(set(ports))
 
 
+def write_text_report(path: str, ip: str, results: list):
+    """Write scan results to a text report."""
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("Vulnerability Scanner Report\n")
+        f.write(f"Target: {ip}\n")
+        f.write(f"Generated: {datetime.now().isoformat(timespec='seconds')}\n\n")
+
+        if not results:
+            f.write("No open ports found on scanned list.\n")
+            return
+
+        for r in results:
+            f.write(f"Port {r['port']}/tcp ({r['service']}) - OPEN\n")
+            if r["banner"]:
+                f.write(f"  Banner: {r['banner']}\n")
+            if r["risk"]:
+                f.write(f"  Risk note: {r['risk']}\n")
+            f.write("\n")
+
+
+def write_json_report(path: str, ip: str, results: list):
+    """Write scan results to a JSON report."""
+    payload = {
+        "target": ip,
+        "generated": datetime.now().isoformat(timespec="seconds"),
+        "open_ports": results
+    }
+    with open(path, "w", encoding="utf-8") as jf:
+        json.dump(payload, jf, indent=2)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Basic TCP Port Scanner")
     parser.add_argument("target", help="Target IPv4 address (e.g., 192.168.1.10)")
     parser.add_argument("--ports", default="", help="Comma-separated ports (e.g., 22,80,443)")
     parser.add_argument("--timeout", type=float, default=0.6)
     parser.add_argument("--threads", type=int, default=60)
+    parser.add_argument("--report", action="store_true", help="Write a text report into ./reports/")
+    parser.add_argument("--json", action="store_true", help="Write a JSON report into ./reports/")
     args = parser.parse_args()
 
     ip = args.target.strip()
@@ -140,6 +175,18 @@ def main():
 
     if not open_results:
         print("No open ports found.")
+
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    if args.report:
+        text_path = f"reports/report_{ip.replace('.', '_')}_{ts}.txt"
+        write_text_report(text_path, ip, open_results)
+        print(f"\nReport written to: {text_path}")
+
+    if args.json:
+        json_path = f"reports/report_{ip.replace('.', '_')}_{ts}.json"
+        write_json_report(json_path, ip, open_results)
+        print(f"JSON written to: {json_path}")
 
 
 if __name__ == "__main__":
